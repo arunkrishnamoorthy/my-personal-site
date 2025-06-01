@@ -37,14 +37,14 @@ describe("utils.ts", () => {
 
     test("getMDXData for all files", () => {
         const result = utils.getMDXData(testDirectory);
-        expect(result).toHaveLength(5);
+        expect(result).toHaveLength(7);
         expect(result[0]).toHaveProperty("metadata");
         expect(result[0]).toHaveProperty("slug");
     });
 
     test("getBlogPosts functions to return all blogs", () => {
         const result = utils.getBlogPosts();
-        expect(result).toHaveLength(5);
+        expect(result).toHaveLength(7);
         expect(result[0]).toHaveProperty("metadata");
         expect(result[0]).toHaveProperty("slug");
     });
