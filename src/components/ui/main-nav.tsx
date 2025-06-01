@@ -21,7 +21,7 @@ import { PAGES } from "@/lib/constants"
 
 export function MainNav({ className }: { className?: string }) {
     return (
-        <div className={cn("flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between pt-10 px-2 md:px-20 z-50",className)}>
+        <div className={cn("flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between pt-10 z-50",className)}>
             <Link href={"/"}>
                 <div className="flex items-center justify-between">
                     <Icons.logo className="h-6 w-6" />

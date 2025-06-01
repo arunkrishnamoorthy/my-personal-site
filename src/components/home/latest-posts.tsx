@@ -5,7 +5,7 @@ export default function LatestPosts() {
     const posts = getLatestPosts();
     return (
         <>  
-            <h1 className="inline-block font-heading text-4xl tracking-tight lg:text-5xl">
+            <h1 className="inline-block font-heading text-2xl tracking-tight lg:text-2xl pt-10">
                 Recently Published
             </h1>
             {posts.map((post) => (
