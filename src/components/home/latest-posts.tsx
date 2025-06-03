@@ -1,5 +1,6 @@
 import { formatDate, getLatestPosts } from "@/app/blog/utils";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 
 
@@ -22,6 +23,13 @@ export default function LatestPosts() {
                     </p>
                 </article>
             ))}
+            <div className="flex gap-2 items-center">
+                <Button className="px-3 py-1 border rounded" variant={"ghost"} >Previous</Button>
+                <span>
+                    Page {1} of {20}
+                </span>
+                <Button className="px-3 py-1 border rounded" variant={"ghost"} >Next</Button>
+            </div>
         </>
     )
 
