@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Container from "@/components/Container";
 import { BreadcrumbWithCustomSeparator } from "@/components/Breadcrumb";
 import { CustomMDX } from "@/components/mdx";
+import ReportView from "@/components/ReportViews";
 
 type Params = Promise<{ category: string; slug: string }>
 
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
 
 export default async function Page({
     params
-}: { params: Params } ) {
+}: { params: Params }) {
 
     const { category, slug } = await params;
     const post = getBlogPosts().find((post) => post.slug === slug);
@@ -28,6 +29,9 @@ export default async function Page({
 
     return (
         <>
+            <ReportView category={post.metadata.category}
+                title={post.metadata.title}
+                slug={post.slug}></ReportView>
             <Header>
                 <Container>
                     <BreadcrumbWithCustomSeparator category={post.metadata.category} slug={post.slug} />
