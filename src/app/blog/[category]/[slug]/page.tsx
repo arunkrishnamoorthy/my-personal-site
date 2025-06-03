@@ -8,12 +8,12 @@ import { CustomMDX } from "@/components/mdx";
 type Params = Promise<{ category: string; slug: string }>
 
 
-export async function generateStaticParams() {
-    const posts = getBlogPosts();
-    return posts.map((post) => ({
-        slug: post.slug
-    }))
-}
+// export async function generateStaticParams() {
+//     const posts = getBlogPosts();
+//     return posts.map((post) => ({
+//         slug: post.slug
+//     }))
+// }
 
 export default async function Page({
     params

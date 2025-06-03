@@ -6,12 +6,12 @@ import Container from "@/components/Container";
 import Header from "@/components/Header";
 
 
-export async function generateStaticParams() {
-    const posts = getBlogPosts();
-    return posts.map((post) => ({
-        category: post.metadata.category
-    }))
-}
+// export async function generateStaticParams() {
+//     const posts = getBlogPosts();
+//     return posts.map((post) => ({
+//         category: post.metadata.category
+//     }))
+// }
 
 
 export default async function Page({ params }: { params: Promise<{ category: string }>}) {

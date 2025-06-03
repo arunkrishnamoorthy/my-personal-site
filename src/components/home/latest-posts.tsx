@@ -1,6 +1,6 @@
-
 import { formatDate, getLatestPosts } from "@/app/blog/utils";
 import Link from "next/link";
+
 
 
 export default function LatestPosts() {
