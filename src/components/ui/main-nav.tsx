@@ -21,7 +21,7 @@ import { PAGES } from "@/lib/constants"
 
 export function MainNav({ className }: { className?: string }) {
     return (
-        <div className={cn("flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between pt-10 z-50",className)}>
+        <div className={cn("flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between pt-10 z-50", className)}>
             <Link href={"/"}>
                 <div className="flex items-center justify-between">
                     <Icons.logo className="h-6 w-6" />
@@ -31,7 +31,7 @@ export function MainNav({ className }: { className?: string }) {
             <NavigationMenu viewport={false}>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>Topics</NavigationMenuTrigger>
+                        <NavigationMenuTrigger>Library</NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px] z-10">
                                 {PAGES.map((page) => (
@@ -47,8 +47,8 @@ export function MainNav({ className }: { className?: string }) {
                         </NavigationMenuContent>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <NavigationMenuLink  asChild className={navigationMenuTriggerStyle()}>
-                            <Link href="/docs">About</Link>
+                        <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                            <Link href="/about">About Me</Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
