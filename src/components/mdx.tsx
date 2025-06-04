@@ -4,7 +4,6 @@ import Link from "next/link";
 import React from "react";
 import { highlight } from "sugar-high";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Blockquote(props: any) {
     return (
         <blockquote
@@ -14,7 +13,7 @@ function Blockquote(props: any) {
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 function Code({ children , ...props }: any) {
     const codeHTML = highlight(children);
 
@@ -23,7 +22,7 @@ function Code({ children , ...props }: any) {
     )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 function CustomLink(props: any) {
     const href = props.href;
     if(href.startsWith("/")){
@@ -41,7 +40,7 @@ function CustomLink(props: any) {
     return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 function RoundedImage(props: any) {
     return <Image alt={props.alt} className="rounded-lg" {...props} />
 }
@@ -57,7 +56,6 @@ function slugify(str: string ) {
 }
 
 function createHeading(level: number) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Heading = ({ children }: any ) => {
         const slug = slugify(children);
 
@@ -81,15 +79,12 @@ function createHeading(level: number) {
     return Heading;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Table({ data } : any) {
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const headers = data.headers.map((header:any, index: any) => (
         <th key={index}>{header}</th>
     ))
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rows = data.rows.map((cell: any, cellIndex: any) => (
         <td key={cellIndex}>{cell}</td>
     ))
@@ -120,7 +115,6 @@ const components =  {
     Table
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function CustomMDX(props:any) {
     return(
         <MDXRemote 
