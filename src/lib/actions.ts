@@ -22,7 +22,7 @@ export type State = {
 }
 
 export async function createSubscriber(prevState: State, formData: FormData):  Promise<State> {
-    let mail = formData.get('email');
+    const mail = formData.get('email');
     const validatedField = createSubscriberSchema.safeParse({
         email: mail
     })

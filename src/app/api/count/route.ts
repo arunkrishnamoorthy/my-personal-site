@@ -2,7 +2,7 @@ import { db } from "@/db";
 
 export async function GET(request: Request) {
     try {
-        const blogs:[] = await db.blog.findMany();
+        const blogs = await db.blog.findMany();
         return new Response(JSON.stringify(blogs), { status: 200 });
     } catch(err) {
         console.log(`Error fetching blog counts`, err);
