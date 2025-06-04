@@ -1,10 +1,17 @@
+"use client";
+
 import { Icons } from "@/components/ui/icon"
 import { PAGES } from "@/lib/constants"
 import Link from "next/link"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
+import { createSubscriber, type State } from "@/lib/actions"
+import { useFormState } from "react-dom"
 
 export default function Footer() {
+
+    const initialState: State = { message: '', errors : {} }
+    const [state, dispatch] = useFormState(createSubscriber, initialState);
 
     return (
         <footer className="bg-gray-100 py-8 dark:bg-gray-800 mt-10">
@@ -91,15 +98,24 @@ export default function Footer() {
                         <p className="text-gray-500 dark:text-gray-400 text-sm">
                             Subscribe to our newsletter to stay upto date with my content.
                         </p>
-                        <form>
+                        <form action={dispatch}>
                             <div className="flex space-x-2">
                                 <Input type="email" placeholder="Enter your email"
                                     className="flex-1"
                                     name="email" 
                                     defaultValue=""
                                     aria-describedby="email-error"/>
+                                
                                 <Button>Subscribe</Button>
                             </div>
+                            <div id="email-error" aria-label="polite" aria-atomic="true" className="px-1">
+                                    {state?.errors?.email && state.errors.email?.map((error:string) => (<>
+                                        <p key={error} className="text-xs text-red-500">{error}</p>
+                                    </>))}
+                                    {!state?.errors && (
+                                        <p className="text-xs text-green-500">{state.message}</p>
+                                    )}
+                                </div>
                         </form>
                     </div>
                 </div>

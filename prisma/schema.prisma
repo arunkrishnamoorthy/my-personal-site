@@ -27,3 +27,9 @@ model Blog {
   view_count Int      @default(1)
   updateAt   DateTime @default(now())
 }
+
+model Subscriber {
+  id      Int @id @default(autoincrement())
+  email   String 
+  is_subscribed Boolean @default(true)
+}
