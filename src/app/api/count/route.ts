@@ -1,7 +1,14 @@
 import { db } from "@/db";
 
-export async function GET() {
-    return new Response(JSON.stringify({ data: ['a','b','c'] }), { status: 200 });
+export async function GET(request: Request) {
+    try {
+        const blogs = await db.blog.findMany();
+        return new Response(JSON.stringify(blogs), { status: 200 });
+    } catch(err) {
+        console.log(`Error fetching blog counts`, err);
+        return new Response(`Failed to get blogs`, { status: 400 });
+    }
+    
 }
 
 export async function POST(request: Request) {

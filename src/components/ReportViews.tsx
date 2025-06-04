@@ -9,8 +9,10 @@ export default function ReportView({
     category
 }: { slug: string, title: string, category: string }) {
 
-    useEffect(() => {
+    console.log(`Fetch url ${fetchUrl}`);
 
+    useEffect(() => {
+        console.log("Updating the count to the database")
         const postData = async () => {
             try {
                 await fetch(`${fetchUrl}/count`, {

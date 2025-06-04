@@ -22,6 +22,7 @@ export default async function Page({
 
     const { category, slug } = await params;
     const post = getBlogPosts().find((post) => post.slug === slug);
+    console.log(`Data sent to report view, ${post?.metadata.category}`);
 
     if (!post) {
         notFound();
