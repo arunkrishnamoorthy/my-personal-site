@@ -6,7 +6,7 @@ export default function ContactForm() {
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 shadow mt-6">
-      <h3 className="text-lg font-semibold mb-4">Contact Me</h3>
+      <h3 className="text-lg font-semibold mb-4">Get in Touch!</h3>
       {submitted ? (
         <div className="text-green-600 dark:text-green-400 font-semibold">
           Thank you for reaching out!
