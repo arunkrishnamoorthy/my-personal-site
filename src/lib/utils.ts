@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const fetchUrl = process.env.NODE_ENV === 'production' ?
                 // return production api 
-                `${process.env.DOMAIN_NAME}/api`
+                `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/api`
                 : `http://localhost:3000/api`
 
 
