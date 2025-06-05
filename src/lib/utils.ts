@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const fetchUrl = process.env.NODE_ENV === 'production' ?
                 // return production api 
-                `${process.env.NEXT_PUBLIC_DOMAIN_NAME}/api`
+                `https://my-personal-site.sap.vercel.app/api`
                 : `http://localhost:3000/api`
 
 
