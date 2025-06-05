@@ -48,6 +48,11 @@ export function MainNav({ className }: { className?: string }) {
                     </NavigationMenuItem>
                     <NavigationMenuItem>
                         <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                            <Link href="/courses">Courses</Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
                             <Link href="/about">About Me</Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
