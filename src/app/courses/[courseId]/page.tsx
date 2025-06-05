@@ -123,7 +123,7 @@ export default function CourseLanding() {
                     <div>
                         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Overview</h2>
                         <p className="text-gray-700 dark:text-gray-300 text-sm">
-                            This course introduces SAP UI5, SAP's framework for building modern web applications. You'll learn the fundamentals, controls, data binding, routing, OData integration, and deployment to SAP BTP.
+                            This course introduces SAP UI5, SAP&aopos;s framework for building modern web applications. You&aopos;ll learn the fundamentals, controls, data binding, routing, OData integration, and deployment to SAP BTP.
                         </p>
                     </div>
                     {/* Learning Objectives */}

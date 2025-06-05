@@ -247,7 +247,7 @@ export default function LecturePage() {
     // Comment state
     const [comments, setComments] = useState(commentsData);
     const [newComment, setNewComment] = useState("");
-    const [replyingTo, setReplyingTo] = useState(null); // comment id or reply id
+    const [replyingTo, setReplyingTo] = useState<number>(0); // comment id or reply id
     const [replyText, setReplyText] = useState("");
 
     // Add new top-level comment
@@ -267,7 +267,7 @@ export default function LecturePage() {
     };
 
     // Add reply to a comment
-    const handleAddReply = (commentId) => {
+    const handleAddReply = (commentId: number) => {
         if (!replyText.trim()) return;
         setComments(comments.map(comment => {
             if (comment.id === commentId) {
@@ -286,7 +286,7 @@ export default function LecturePage() {
             }
             return comment;
         }));
-        setReplyingTo(null);
+        setReplyingTo(0);
         setReplyText("");
     };
 
@@ -446,7 +446,7 @@ export default function LecturePage() {
                                     </button>
                                     <button
                                         className="text-xs text-gray-500 hover:underline"
-                                        onClick={() => { setReplyingTo(null); setReplyText(""); }}
+                                        onClick={() => { setReplyingTo(0); setReplyText(""); }}
                                     >
                                         Cancel
                                     </button>
@@ -454,7 +454,7 @@ export default function LecturePage() {
                             ) : (
                                 <button
                                     className="text-blue-700 text-xs font-semibold hover:underline"
-                                    onClick={() => { setReplyingTo(comment.id); setReplyText(""); }}
+                                    onClick={() => { setReplyingTo(comment?.id); setReplyText(""); }}
                                 >
                                     Reply
                                 </button>
@@ -488,7 +488,7 @@ export default function LecturePage() {
                                             </button>
                                             <button
                                                 className="text-xs text-gray-500 hover:underline"
-                                                onClick={() => { setReplyingTo(null); setReplyText(""); }}
+                                                onClick={() => { setReplyingTo(0); setReplyText(""); }}
                                             >
                                                 Cancel
                                             </button>
