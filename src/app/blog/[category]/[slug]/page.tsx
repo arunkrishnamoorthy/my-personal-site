@@ -5,6 +5,8 @@ import Container from "@/components/Container";
 import { BreadcrumbWithCustomSeparator } from "@/components/Breadcrumb";
 import { CustomMDX } from "@/components/mdx";
 import ReportView from "@/components/ReportViews";
+import { serializeMDX } from "@/app/blog/utils";
+
 
 type Params = Promise<{ category: string; slug: string }>
 
@@ -27,6 +29,8 @@ export default async function Page({
     if (!post) {
         notFound();
     }
+
+    // const mdxSource = await serializeMDX(post.content);
 
     return (
         <>

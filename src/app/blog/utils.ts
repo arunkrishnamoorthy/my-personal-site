@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { compileMDX } from "next-mdx-remote/rsc";
+import rehypeSanitize from "rehype-sanitize";
+import rehypeRaw from "rehype-raw";
+
 
 // Get all the MDX files. 
 export function getMDXFiles(directory: string): string[] {
@@ -88,4 +92,19 @@ export function getLatestPosts() {
     })
     // add logic here to get top 5/10 posts - Feat: Improvements
     return posts;
+}
+
+export async function serializeMDX(source: string) {
+  return compileMDX({
+    source,
+    options: {
+      mdxOptions: {
+        rehypePlugins: [
+          rehypeRaw,      // Allows HTML in markdown
+          rehypeSanitize, // Sanitizes HTML
+        ],
+      },
+    },
+    // components: {}, // Optionally pass custom components here
+  });
 }

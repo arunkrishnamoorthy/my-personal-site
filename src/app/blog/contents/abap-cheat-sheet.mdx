@@ -120,7 +120,7 @@ Internal Tables ...
 | Category | Internally managed by | Access | Primary table key | When to use | Hints |
 |---|---|---|---|---|---|
 |`STANDARD`|Primary table index (that's why these tables are called [index tables](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenindex_table_glosry.htm))|<ul><li>Table index</li><li>Table key</li></ul>|<ul><li>Always non-unique, i.e. duplicate entries are always allowed</li><li>Definition of an empty key is possible if the key is not relevant(`WITH EMPTY KEY`)</li></ul>|<ul><li>If you primarily access the table content for sequential processing or via the table index.</li><li>Response time for accessing the table using the primary key: This kind of table access is optimized only for sorted and hashed tables. For standard tables, primary key access uses a linear search across all lines. That means that large standard tables (more than 100 lines) are not ideal if the you primarily access the table using the table key.</li></ul>|<ul><li>There is no particular sort order, but the tables can be sorted using `SORT`.</li><li>Populating this kind of table: Lines are either appended at the end of the table or inserted at a specific position.</li><li>[Secondary table keys](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abensecondary_table_key_glosry.htm) can be defined to make key access to standard tables more efficient.</li><li>Standard and sorted tables have the least [administration costs (F1 docu for standard ABAP)](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abenadmin_costs_dyn_mem_obj_guidl.htm).</li></ul>|
-|`SORTED`|Primary table index (that's why these tables are called [index tables](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenindex_table_glosry.htm))|<ul><li>Table index</li><li>Table key</li></ul>|<ul><li>Non-unique</li><li>Unique</li><br>... used to sort the table in ascending order.</ul>|<ul><li>Enables an optimized access to table content using table key and index.</li><li>If access via table key is the main access method, but no unique key can be defined.</li></ul>|<ul><li>Sorting is done automatically when lines are inserted or deleted. As a consequence, the table index must usually be reorganized. </li><li>The response time for accessing the table using the primary key depends logarithmically on the number of table entries, since a binary search is used.</li><li>Standard and sorted tables have the least administration costs.</li></ul>|
+|`SORTED`|Primary table index (that's why these tables are called [index tables](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenindex_table_glosry.htm))|<ul><li>Table index</li><li>Table key</li></ul>|<ul><li>Non-unique</li><li>Unique</li><br />... used to sort the table in ascending order.</ul>|<ul><li>Enables an optimized access to table content using table key and index.</li><li>If access via table key is the main access method, but no unique key can be defined.</li></ul>|<ul><li>Sorting is done automatically when lines are inserted or deleted. As a consequence, the table index must usually be reorganized. </li><li>The response time for accessing the table using the primary key depends logarithmically on the number of table entries, since a binary search is used.</li><li>Standard and sorted tables have the least administration costs.</li></ul>|
 |`HASHED`|Hash algorithm |<ul><li>Table key</li><li>[Secondary table index](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abensecondary_table_index_glosry.htm)</li></ul>|Always unique|<ul><li>For large internal tables.</li><li>Optimized for key access. Access to table content via table key is the main access method and a unique key can be defined.</li></ul>|<ul><li>The response time for primary key access is constant and independent of the number of entries in the table.</li><li>Hashed tables have the highest administration costs.</li></ul>|
 
 
@@ -165,7 +165,7 @@ Internal Tables ...
 - The primary table key has the predefined name `primary_key`, by which it can also be addressed explicitly. However, its use is optional, and it is usually not necessary to specify it explicitly. You can also specify an alias name for the primary key. 
 - When accessing internal tables using the table key, the primary key is always used implicitly in processing statements if no secondary key is specified. Note that the primary table key must be specified in table expressions if the primary key is to be used explicitly.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > The key can consist of individual key fields or the entire line of the internal table. In this case, the pseudo component `table_line` can be used to denote the primary table key. For non-structured line types, this is the only way to define the key.
 
 **Standard key**
@@ -194,7 +194,7 @@ Internal Tables ...
         if an unstructured line type is tabular.
     - Note: When using an [inline declaration](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abeninline_declaration_glosry.htm "Glossary Entry") such as `... INTO TABLE @DATA(itab) ...` in `SELECT` statements, the resulting table is a standard table and has an empty key.
 
-> **💡 Primary table index**<br>
+> **💡 Primary table index**<br />
 > - Index tables, such as sorted and standard tables, have a primary table index. 
 > - Each table line receives a unique line number from the primary table index. 
 > - The index updates each time a line is added or removed. 
@@ -224,7 +224,7 @@ Internal Tables ...
 - For more details, see the programming guidelines for secondary keys: [Secondary
     Key (F1 docu for standard ABAP)](https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/index.htm?file=abensecondary_key_guidl.htm "Guideline").
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - See examples of internal table declarations using the table keys mentioned above in the following section.
 > - See more information and examples that focus on table access using keys and index below.
  
@@ -249,7 +249,7 @@ DATA  itab3      TYPE                   itab_type1 ...  "Based on an existing in
 DATA  itab4      LIKE                   itab1 ...       "Based on an existing internal table       
 ```
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - If the table category is not specified (`... TYPE TABLE OF ...`), it is automatically `... TYPE STANDARD TABLE OF ...`.
 > - Using [Runtime Type Creation (RTTC)](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenrun_time_type_creation_glosry.htm "Glossary Entry"), you can define and  create new internal tables and table types as [type description objects](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abentype_object_glosry.htm) at runtime. For more information, see the [Dynamic Programming](06_Dynamic_Programming.md) ABAP cheat sheet. Also find a snippet on creating internal tables dynamically by specifying the type dynamically [below](#creating-internal-tables-dynamically).
 
@@ -473,7 +473,7 @@ This section explores various line and table type options when declaring interna
 - Table types based on both locally declared and globally available table types
 - References
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > Types declared in the public visibility section of classes/interfaces are also globally visible and can be used for the creation.
 
 <table>
@@ -714,7 +714,7 @@ SELECT * FROM zdemo_abap_fli INTO TABLE @FINAL(it_l).
 
 ## Populating Internal Tables
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > Various ABAP statements populate internal tables. The following sections cover a selection. ABAP SQL `SELECT`  statements are covered further down and in the [ABAP SQL](03_ABAP_SQL.md) cheat sheet.
 
 ### Copying Internal Tables
@@ -728,7 +728,7 @@ DATA(itab3) = itab.
 FINAL(itab4) = itab.
 ```
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - Internal tables can only be assigned to internal tables. 
 > - Internal tables can be assigned to each other if their line types are [compatible](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abencompatible_glosry.htm) or [convertible](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenconvertible_glosry.htm).
 > - An assignment can trigger an uncatchable exception if, for example, the target table is assigned a duplicate of a unique primary table key or secondary table.
@@ -778,7 +778,7 @@ to add lines to internal tables.
         system field `sy-subrc` is set to 4.
 - What to use? The recommendation is the `INSERT` statement. It covers all table and key types. Consider potential issues when you change table/key types, and you use `APPEND` in your code.         
 </details>
-<br>
+<br />
 
 <table>
 <tr>
@@ -790,7 +790,7 @@ to add lines to internal tables.
 
 The example shows both a structure that is created using the `VALUE` operator as well as an existing structure that is added.
 
-<br>
+<br />
 
 ``` abap
 APPEND VALUE #( comp1 = a comp2 = b ... ) TO itab.
@@ -808,7 +808,7 @@ INSERT struc INTO TABLE itab.
 <td>
 
 ... to an internal table without providing any field values.
-<br>
+<br />
 
 ``` abap
 APPEND INITIAL LINE TO itab.
@@ -858,7 +858,7 @@ INSERT LINES OF itab2 INTO TABLE itab.
   - `FROM`, all lines up to the last table entry are respected.
   - `TO`, all lines starting with the first table entry are respected. 
 
-<br>
+<br />
 
 ``` abap
 APPEND LINES OF itab2 FROM 3 TO 5 TO itab.
@@ -880,7 +880,7 @@ INSERT LINES OF itab2 FROM 5 TO 9 INTO TABLE itab.
 
 `FROM` and `TO` can be used here, too.
 
-<br>
+<br />
 
 ``` abap
 INSERT struc INTO itab2 INDEX i.
@@ -899,7 +899,7 @@ INSERT LINES OF itab2 INTO itab INDEX i.
 ### Creating and Populating Internal Tables Using Constructor Expressions
 The constructor expressions can be specified in/with various positions/statements in ABAP. In most of the following snippets, simple assignments are demonstrated.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > The following sections cover a selection. There are more constructor expressions used in the context of internal tables (e.g. for creating internal tables). Find more details in the [Constructor Expressions](05_Constructor_Expressions.md) cheat sheet.
 
 #### VALUE Operator
@@ -924,11 +924,11 @@ operator. The inline constructed table has two lines. `line`
 represents an existing structure with a compatible line type. The
 other line is constructed inline.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - The extra pair of parentheses represents a table line. The `#` character indicates that the line type can be derived from the context. The assignment deletes the existing content of the internal table on the left side.
 > - The existing content of the internal table is deleted, and the new content, which is created in place, is added.
 
-<br>
+<br />
 
 ``` abap
 itab = VALUE #( ( line )
@@ -971,7 +971,7 @@ DATA str_tab_c TYPE string_table.
 
 When you use the above assignments to an existing internal table (`itab = ...`), the internal table is initialized and the existing content is deleted. To add new lines without deleting existing content, use the  [`BASE`](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenvalue_constructor_params_itab.htm) addition.
 
-<br>
+<br />
 
 ``` abap
 itab = VALUE #( BASE itab ( comp1 = a comp2 = b ... )
@@ -986,7 +986,7 @@ itab = VALUE #( BASE itab ( comp1 = a comp2 = b ... )
 
 ... using the `LINES OF` addition to the `VALUE` operator.
 Without the `BASE` addition, the existing content is deleted. It is assumed that the line type of the source table is compatible with that of the target table. You have multiple syntax options following the `LINES OF` addition, e.g. you can further determine and restrict the lines to be added using `FROM` and `TO`.
-<br>
+<br />
 
 ``` abap
 itab = VALUE #( ( comp1 = a comp2 = b ...)
@@ -1010,7 +1010,7 @@ itab = VALUE #( ( comp1 = a comp2 = b ...)
 <td>
 
 Using the `VALUE` operator and iteration expressions with [`FOR`](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenfor.htm), you can create content of an internal table by evaluating one or more source tables. The expressions are covered in the [Constructor Expressions](05_Constructor_Expressions.md) cheat sheet.
-<br>
+<br />
 
 ```abap
 TYPES ty_int_tab TYPE TABLE OF i WITH EMPTY KEY.
@@ -1047,7 +1047,7 @@ int_table_b = VALUE #( FOR wa_b IN int_table_a ( wa_b * 2 ) ).
 - The example assumes that the line types of the source and target table are not compatible. However, if the line types are compatible, the syntax will also work.
 - Several additions are possible. They can also be combined. Check the ABAP Keyword Documentation.
 
-<br>
+<br />
 
 ``` abap
 itab = CORRESPONDING #( itab3 ).
@@ -1064,7 +1064,7 @@ MOVE-CORRESPONDING itab3 TO itab.
 
 ... using the `CORRESPONDING` operator. 
 The `KEEPING TARGET LINES` addition of the `MOVE-CORRESPONDING` statement preserves the table content.
-<br>
+<br />
 
 ``` abap
 itab = CORRESPONDING #( BASE ( itab ) itab3 ).
@@ -1081,7 +1081,7 @@ MOVE-CORRESPONDING itab3 TO itab KEEPING TARGET LINES.
 - You can use the `MAPPING` addition of the `CORRESPONDING` operator to specify components of a source table that are assigned to the components of a target table in mapping relationships. 
 - For elementary components, the assignment is made according to the associated assignment rules.
 
-<br>
+<br />
 
 ``` abap
 itab = CORRESPONDING #( itab3 MAPPING a = c b = d ).
@@ -1097,7 +1097,7 @@ itab = CORRESPONDING #( itab3 MAPPING a = c b = d ).
 - This is particularly useful if there are identically named components in the source and target tables that are not compatible or convertible. You can avoid syntax errors or runtime errors. 
 - Instead of a component list, `EXCEPT` can also be followed by `*` to exclude all components that are not mentioned in a previous mapping of components. 
 - If `EXCEPT *` is used without the `MAPPING` addition, all components remain initial.
-<br>
+<br />
 
 ``` abap
 itab = CORRESPONDING #( itab3 EXCEPT e ).
@@ -1115,7 +1115,7 @@ itab = CORRESPONDING #( itab3 EXCEPT * ).
 ... to the target table that is defined to accept only unique keys using the `DISCARDING DUPLICATES` addition of the `CORRESPONDING` operator. 
 - In this case, the duplicate line is ignored in the source table. 
 - The addition can also be specified with `MAPPING ...`.
-<br>
+<br />
 
 ``` abap
 itab = CORRESPONDING #( itab2 DISCARDING DUPLICATES ).
@@ -1132,7 +1132,7 @@ itab = CORRESPONDING #( itab2 DISCARDING DUPLICATES ).
 - The `BASE` addition does not delete the existing content. 
 - See also the alternative `MOVE-CORRESPONDING` statements that use the `EXPANDING NESTED TABLES` addition.
 
-<br>
+<br />
 
 ``` abap
 itab_nested2 = CORRESPONDING #( DEEP itab_nested1 ).
@@ -1166,7 +1166,7 @@ MOVE-CORRESPONDING itab_nested1 TO itab_nested2 EXPANDING NESTED TABLES KEEPING 
 
 </table>
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > The `CL_ABAP_CORRESPONDING` class can be used for assignments. Find an example in the [Released ABAP Classes](22_Released_ABAP_Classes.md) cheat sheet.
 
 <p align="right"><a href="#top">⬆️ back to top</a></p>
@@ -1242,7 +1242,7 @@ DATA(f10) = FILTER #( itab2 IN filter_tab2 USING KEY line WHERE num = table_line
 DATA(f11) = FILTER #( itab2 USING KEY sec_key EXCEPT IN filter_tab2 WHERE num = table_line ).
 ```
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > More constructor expressions are available to deal with internal tables, for example the `REDUCE` operator. Find more information and examples in the [Constructor Expression cheat sheet](05_Constructor_Expressions.md).
 
 <p align="right"><a href="#top">⬆️ back to top</a></p>
@@ -1604,7 +1604,7 @@ Data object
 - However, you can modify the copied table line and use a `MODIFY` statement to modify the table based on the modified table line (see below). 
 - The `TRANSPORTING` addition specifies which components to copy. If it is not specified, all components are respected.
     
-<br>
+<br />
 
 ``` abap
 "dobj must have the table's structure type
@@ -1633,7 +1633,7 @@ Field symbol
     modifying the table line directly. 
 - Note that you cannot use the `TRANSPORTING` addition since the entire table is assigned to the field symbol.
 
-<br>
+<br />
 
 ``` abap
 "The field symbol must have an appropriate type.
@@ -1660,7 +1660,7 @@ Data reference variable
 - If you want to address the line, you must first [dereference](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abendereferencing_operat_glosry.htm) the data reference. 
 - You cannot use the addition `TRANSPORTING`.
 
-<br>
+<br />
 
 ``` abap
 "The data reference variable must have an appropriate type.
@@ -1675,7 +1675,7 @@ READ TABLE itab REFERENCE INTO DATA(dref_inl) ...
 
 </table>
 
-> **✔️ Hint**<br>
+> **✔️ Hint**<br />
 > Which to use then? Since all syntax options basically provide similar
 functionality, your use case, the
 performance or readability of the code may play a role. For more information, see 
@@ -1705,7 +1705,7 @@ specified by its name `primary_key`, the table must be an index table, and the b
 not specified.
 Note that the examples only show reading into a work area. Other targets are possible as shown above. 
 
-<br>
+<br />
 
 ``` abap
 "Primary table index is used by default
@@ -1735,7 +1735,7 @@ not found results in an runtime error. To avoid an error, you can
 use a [`TRY ... CATCH ... ENDTRY.`](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abaptry.htm) block.
 
 Find more information about syntax related to table expressions [further down](#table-expressions).
-<br>
+<br />
 
 ``` abap
 "In the examples, integer values are specified for the index.
@@ -1768,7 +1768,7 @@ exception. The result returned is a line with initial values.
 Alternatively, you can use the `DEFAULT` addition to return a
 default line in case of an unsuccessful read operation, which can also be another table expression or constructor expression.
 
-<br>
+<br />
 
 ``` abap
 DATA(line1) = VALUE #( itab[ 6 ] OPTIONAL ).
@@ -2937,7 +2937,7 @@ The following table demonstrates a selection of subjects where table expressions
 - The `KEY` addition here works like `USING KEY` in `READ TABLE` statements.
 - Note that the demo internal tables in the snippet are used in the following examples of the section. 
 
-<br>
+<br />
 
 ``` abap
 "Creating and populating demo internal tables
@@ -3012,7 +3012,7 @@ DATA(line_hashed_tab3) = itab_hashed[ KEY sk INDEX 2 ].
   - Binary searches cannot be enforced with table expressions (unlike `READ TABLE` statements).
   - Key names can also be specified dynamically using parentheses `(...)`.
 
-<br>
+<br />
 
 ``` abap
 *&---------------------------------------------------------------------*
@@ -3104,7 +3104,7 @@ line = itab_so[ comp1 = 1 ].
 - However, in case of sorted and hashed tables, an optimized search is performed when some or all of the key components are specified as free keys (without any `... KEY ...` addition).
 - Note that binary searches cannot be enforced with table expressions (unlike `READ TABLE` statements).
 
-<br>
+<br />
 
 ``` abap
 "The search is and cannot be optimized as the component is not part of 
@@ -3123,7 +3123,7 @@ line = itab[ comp4 = 'ccc' ].
 
 This is to emphasize that table expressions can be used in various read positions. The snippet shows a few examples. Check the notes in the ABAP Keyword Documentation topics about the use. 
 
-<br>
+<br />
 
 ``` abap
 DATA(first_line) = itab[ 1 ].
@@ -3200,7 +3200,7 @@ DATA(line_ref) = REF #( itab[ 3 ] ).
 - When using `OPTIONAL`, the type-specific initial value is set. After the `DEFAULT` addition, a value is expected that is convertible to the target type. You may also specify another table expression for an alternative table line to be searched.
 
 
-<br>
+<br />
 
 ``` abap
 "Accessing a non-existent table line raises a catchable exception
@@ -3225,7 +3225,7 @@ line = VALUE #( itab[ 6 ] DEFAULT VALUE #( ) ).
 The previous examples use concrete internal table names specified before the square brackets. Field symbols and dereferenced data references are also possible.
 
 
-<br>
+<br />
 
 ``` abap
 ASSIGN itab TO FIELD-SYMBOL(<tab>).
@@ -3247,7 +3247,7 @@ line = dref->*[ 2 ].
 
 Using table expressions, you can read entire lines individually. This is just to emphasize that when reading multiple lines sequentially, `LOOP` statements and `FOR` loops are recommended.
 
-<br>
+<br />
 
 ``` abap
 "Instead of something like this ...
@@ -3300,7 +3300,7 @@ DATA(compd) = itab[ comp4 = 'ccc' ]-comp1.
 - Table expressions can be chained if the table expression result is a table itself.
 - Note the pitfall remarks further down.
 
-<br>
+<br />
 
 ``` abap
 "Creating deep internal table
@@ -3368,7 +3368,7 @@ DATA(dref_compb) = itab_ref[ 1 ]->*-comp4.
 
 Note that you cannot perform writes on entire lines in the context of key tables as key values cannot be changed.
 
-<br>
+<br />
 
 ``` abap
 "The demo table is a key table. Therefore, writes on entire lines produce runtime errors.
@@ -3411,7 +3411,7 @@ itab_std[ 3 ]-comp1 = 456.
 
 For more information about dynamic programming, refer to the [Dynamic Programming](06_Dynamic_Programming.md) cheat sheet.
 
-<br>
+<br />
 
 ``` abap
 "Dynamic key and component specifications
@@ -3599,9 +3599,6 @@ ENDCLASS.
 
 </td>
 </tr>
-<tr>
-
-
 </table>
 
 <p align="right"><a href="#top">⬆️ back to top</a></p>
@@ -4238,7 +4235,7 @@ MODIFY it FROM line USING KEY sec_key INDEX 1 TRANSPORTING c d.
 MODIFY it FROM line TRANSPORTING b c WHERE a < 5.
 ```
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - The system field `sy-subrc` is set to `0` if at least one line was changed. It is set to `4` if no lines were changed.
 > - `MODIFY`, `DELETE`, and `INSERT` statements can be specified with and without the `TABLE` addition. With `TABLE` means an index access. Without `TABLE` means an access via the table key.
 
@@ -4381,7 +4378,7 @@ DELETE ADJACENT DUPLICATES FROM it USING KEY primary_key.
 DELETE ADJACENT DUPLICATES FROM it USING KEY sec_key.
 ```
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > The system field `sy-subrc` is set to `0` if at least one line has been deleted. It is set to `4` if no lines were deleted.
 
 ### Deleting the Entire Internal Table Content
@@ -4472,7 +4469,7 @@ Plus: Suppose there are only elementary numeric components in an internal table 
 You can sort by any component of the internal table. It is also possible to specify the sort order 
 (even component-wise). Explicitly specifying the components has the advantage that your code is easier to understand and you can avoid unexpected results if you accidentally use `SORT` without the `BY` addition on empty and standard table keys.
 
-<br>
+<br />
 
 ``` abap
 DATA it3 TYPE TABLE OF struc WITH NON-UNIQUE KEY a.
@@ -4500,10 +4497,10 @@ SORT itab BY table_line.
 <td>
 
 By default, the sorting is unstable concerning preserving the order of table lines with identical sort keys. To ensure a stable sorting with preserving the order of table lines with identical 
-sort keys, you can use the `STABLE` addition.<br><br>
+sort keys, you can use the `STABLE` addition.<br /><br />
 This code example explores the difference in sorting results when using `STABLE` versus not using it with the `SORT` statement. A `SELECT` statement retrieves data from an internal table, specifying an `ORDER BY` clause for two columns. `SORT` statements sort the internal table. Using `STABLE` demonstrates that the relative order of the columns specified in the `ORDER BY` clause is preserved. Without `STABLE`, this relative order is not necessarily maintained. The `CL_ABAP_DIFF` class is used to compare the internal table content.
 
-<br>
+<br />
 
 ``` abap
 CLASS zcl_demo_abap DEFINITION
@@ -5095,7 +5092,7 @@ SELECT comp1, comp2, ...
 Populating an internal table from a table based on the existence of data in
 another table using the [`FOR ALL ENTRIES`](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-US/index.htm?file=abenwhere_all_entries.htm) addition.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > Make sure that the internal table you are reading from is not initial. Therefore, it is recommended that you use a subquery as shown above: `... ( SELECT ... FROM ... WHERE ... ) ...`.
 
 ``` abap
@@ -5547,7 +5544,7 @@ DATA(itab10) = REDUCE tt_type3( INIT tab = VALUE #( )
 Consider a scenario where you have a standard internal table, and you frequently access its content using a free key. The table is declared without a secondary table key. You can add a secondary table key to improve read performance.
 The following example creates two demo internal tables. One without a secondary table key and the other with a secondary table key. The tables are populated with a lot of data. Then, in a `DO` loop, many reads are performed on the internal tables. One example uses a free key for the read, the other uses a secondary table key that includes the components used for the free key search. Before and after the reads, the current timestamp is stored in variables, from which the elapsed time is calculated. There should be a significant delta of the elapsed time.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > This example is for [exploration, experimentation, and demonstration](./README.md#%EF%B8%8F-disclaimer). It is not intended for accurate runtime or performance testing and is not a suitable method for such purposes. Due to its simplified nature, results may vary and not be entirely accurate, even across multiple runs.
 
 ```abap
@@ -5651,7 +5648,7 @@ ENDCLASS.
   - Key (primary table key, secondary table key, free key)
 - To try this, create a demo class named `zcl_demo_abap` and insert the provided code. After activation, choose *F9* in ADT to execute the class. It may take some time to finish and display the output. The example is set up to display the results of the read performance test in the console.
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - This example is for [exploration, experimentation, and demonstration](./README.md#%EF%B8%8F-disclaimer). It is not intended for accurate runtime or performance testing and is not a suitable method for such purposes. Due to its simplified nature, results may vary and not be entirely accurate, even across multiple runs.
 > - The example concentrates on a few demo internal tables, constructed using various declaration options. 
 > - The purpose of this example is to underscore the significance of choosing the right table categories for your internal tables, tailored to your specific use case and the frequency of table access.
@@ -6393,7 +6390,7 @@ Topic [Internal Tables](https://help.sap.com/doc/abapdocu_cp_index_htm/CLOUD/en-
 ## Executable Example
 [zcl_demo_abap_internal_tables](./src/zcl_demo_abap_internal_tables.clas.abap)
 
-> **💡 Note**<br>
+> **💡 Note**<br />
 > - The executable example covers the following topics, among others: Creating, populating, reading from, sorting, modifying internal tables
 > - The steps to import and run the code are outlined [here](README.md#-getting-started-with-the-examples).
 > - [Disclaimer](./README.md#%EF%B8%8F-disclaimer)
