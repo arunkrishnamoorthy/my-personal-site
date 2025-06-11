@@ -19,7 +19,7 @@ import { PAGES } from "@/lib/constants"
 
 
 
-export function MainNav({ className }: { className?: string }) {
+export function MainNavNew({ className }: { className?: string }) {
     return (
         <div className={cn("flex flex-col items-start justify-start md:flex-row md:items-center md:justify-between pt-10 z-50", className)}>
             <Link href={"/"}>
@@ -56,27 +56,15 @@ export function MainNav({ className }: { className?: string }) {
                             <Link href="/about">About Me</Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                            <ModeToggle />
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                                            <Link href="/rss">
-                    <Icons.rss className="h-6 w-6" />
-                </Link>
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>
 
-            {/* <div className="flex items-center justify-between w-20">
+            <div className="flex items-center justify-between w-20">
                 <ModeToggle />
                 <Link href="/rss">
                     <Icons.rss className="h-6 w-6" />
                 </Link>
-            </div> */}
+            </div>
         </div>
 
     )
