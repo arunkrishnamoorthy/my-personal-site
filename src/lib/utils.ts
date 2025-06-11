@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const fetchUrl = process.env.NODE_ENV === 'production' ?
                 // return production api 
-                `https://my-personal-site-sage-three.vercel.app/api`
+                `http://www.btpsimplified.com/api`
                 : `http://localhost:3000/api`
 
 
