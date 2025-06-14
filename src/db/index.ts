@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import dotenv from 'dotenv';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -6,6 +7,7 @@ declare global {
 }
 
 let prisma: PrismaClient;
+dotenv.config();
 
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
