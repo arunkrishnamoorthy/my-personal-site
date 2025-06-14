@@ -8,6 +8,7 @@ declare global {
 
 let prisma: PrismaClient;
 dotenv.config();
+console.log('Loaded DATABASE_URL:', process.env.DATABASE_URL);
 
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient();
