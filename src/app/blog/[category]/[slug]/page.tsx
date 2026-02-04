@@ -30,6 +30,9 @@ export default async function Page({
 
     return (
         <>
+            {/* Background gradient for light mode */}
+            <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
+
             <ReportView category={post.metadata.category}
                 title={post.metadata.title}
                 slug={post.slug}></ReportView>

@@ -10,7 +10,7 @@ export default async function TopCategories() {
         categories = [];
     }
     return (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-2">
+        <div className="grid grid-cols-2 gap-2">
             {categories.map((category) => (
                 <Button key={category} variant={"secondary"} className="hover:scale-110 transition-all" asChild>
                     <Link href={`/blog/${category}`}>

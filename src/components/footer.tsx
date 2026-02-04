@@ -30,19 +30,19 @@ export default function Footer() {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="LinkedIn">
-                                <Icons.linkedIn className="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" />
+                                <Icons.linkedIn className="w-6 h-6 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors" />
                             </a>
                             <a href="https://github.com/arunkrishnamoorthy"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Github">
-                                <Icons.github className="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" />
+                                <Icons.github className="w-6 h-6 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors" />
                             </a>
                             <a href="https://www.youtube.com/@arunmbarec"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label="LinkedIn">
-                                <Icons.youtube className="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300" />
+                                aria-label="YouTube">
+                                <Icons.youtube className="w-6 h-6 text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors" />
                             </a>
                         </div>
                     </div>
@@ -63,14 +63,14 @@ export default function Footer() {
                         <ul className="text-sm space-y-2">
                             <li>
                                 <a href="mailto:arunmba.rec@gmail.com"
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                    className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors">
                                     Contact
                                 </a>
                             </li>
                             <li>
                                 <Link
                                     href="/terms-of-services"
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                    className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors"
                                 >
                                     Terms of Services
                                 </Link>
@@ -78,7 +78,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     href="/privacy-policy"
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                    className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors"
                                 >
                                     Privacy Policy
                                 </Link>
@@ -86,7 +86,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     href="/sitemap.xml"
-                                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                    className="text-gray-500 hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400 transition-colors"
                                 >
                                     Sitemap
                                 </Link>

@@ -293,6 +293,10 @@ export default function LecturePage() {
     return (
         <Container>
             <MainNav />
+
+            {/* Background gradient for light mode */}
+            <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
+
             <div className="max-w-6xl mx-auto mt-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
