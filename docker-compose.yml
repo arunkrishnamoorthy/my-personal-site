@@ -1,0 +1,86 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: techblog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-techblog}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-techblog_password}
+      POSTGRES_DB: ${POSTGRES_DB:-techblog}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    networks:
+      - techblog-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-techblog}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: techblog-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database Configuration
+      DATABASE_URL: postgresql://${POSTGRES_USER:-techblog}:${POSTGRES_PASSWORD:-techblog_password}@postgres:5432/${POSTGRES_DB:-techblog}?schema=public
+
+      # Application Configuration
+      NODE_ENV: production
+      DOMAIN_NAME: ${DOMAIN_NAME:-http://localhost:3000}
+      PORT: 3000
+
+      # Next.js Configuration
+      NEXT_TELEMETRY_DISABLED: 1
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    networks:
+      - techblog-network
+    volumes:
+      # Mount for hot-reload in development (optional, remove in production)
+      - ./src:/app/src:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/count', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx Reverse Proxy (Optional, for production)
+  nginx:
+    image: nginx:alpine
+    container_name: techblog-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - techblog-network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  techblog-network:
+    driver: bridge

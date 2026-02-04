@@ -8,7 +8,20 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "test": "jest"
+    "test": "jest",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f app",
+    "docker:restart": "docker-compose restart",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "db:backup": "./scripts/backup-database.sh",
+    "migrate:from-neon": "./scripts/migrate-from-neon.sh",
+    "deploy:vps": "./scripts/deploy-vps.sh"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
