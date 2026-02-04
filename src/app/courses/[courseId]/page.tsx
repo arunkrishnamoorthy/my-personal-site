@@ -89,7 +89,7 @@ export default function CourseLanding() {
             <section className="w-full max-w-6xl mx-auto mt-8 mb-2">
                 <div className="flex flex-col">
                     <div className="flex items-center">
-                        <span className="text-xl md:text-xl font-bold text-gray-900 dark:text-white mr-4">4</span>
+                        <span className="text-xl md:text-xl font-bold text-emerald-200 dark:text-white mr-4">4</span>
                         <div
                             className="flex-1 h-2 rounded"
                             style={{ backgroundColor: "#f9a8b4", maxWidth: 370 }}
@@ -105,7 +105,7 @@ export default function CourseLanding() {
             <main className="w-full max-w-6xl mx-auto flex flex-col md:flex-row gap-8 mt-8">
                 {/* Left: Course Video Placeholder */}
                 <div className="flex-1">
-                    <div className="bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden shadow flex items-center justify-center h-[220px] md:h-[340px]">
+                    <div className="bg-emerald-500 dark:bg-emerald-300 rounded-xl overflow-hidden shadow flex items-center justify-center h-[220px] md:h-[340px]">
                         <div className="flex flex-col items-center justify-center w-full h-full">
                             <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white/80 shadow-lg">
                                 <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 48 48">
