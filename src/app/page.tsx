@@ -9,6 +9,10 @@ export default function Home() {
   return (
     <Container>
       <MainNav />
+
+      {/* Background gradient for light mode */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
+
       <main className="flex flex-col items-start justify-between mt:16 md:flex-row">
         <div>
           <LatestPosts />

@@ -160,6 +160,10 @@ export default function Courses() {
     return (
         <Container>
             <MainNav />
+
+            {/* Background gradient for light mode */}
+            <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
+
             <main className="flex flex-col items-center mt-10">
                 {/* Heading and Search */}
                 <section className="w-full max-w-4xl flex flex-col items-center mb-6">
@@ -184,14 +188,14 @@ export default function Courses() {
                 </section>
                 {/* Welcome Banner */}
                 <section className="w-full max-w-4xl">
-                    <div className="flex items-center justify-between bg-gradient-to-r from-gray-200 to-gray-100 text-black rounded-2xl px-5 py-5 shadow mb-6">
+                    <div className="flex items-center justify-between bg-gradient-to-r from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 text-white rounded-2xl px-5 py-5 shadow-lg mb-6">
                         <div className="flex items-center">
                             <Image
                                 src="/myphoto.jpeg"
                                 alt="Arun Krishnamoorthy"
                                 width={48}
                                 height={48}
-                                className="rounded-full border-2 border-white shadow"
+                                className="rounded-full border-2 border-white shadow-md"
                             />
                             <div className="ml-4">
                                 <div className="text-lg font-bold mb-0.5">Welcome back, Arun!</div>
@@ -202,7 +206,7 @@ export default function Courses() {
                         </div>
                         <a
                             href="#"
-                            className="bg-white text-gray-700 font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition flex items-center text-sm"
+                            className="bg-white text-emerald-700 font-semibold px-4 py-2 rounded-lg shadow-md hover:bg-emerald-50 transition flex items-center text-sm"
                         >
                             Go to My Learning
                             <svg className="ml-2" width="16" height="16" fill="none" viewBox="0 0 24 24">
@@ -213,14 +217,14 @@ export default function Courses() {
                 </section>
                 {/* Courses List Section */}
                 <section className="w-full max-w-6xl mt-6">
-                    <h2 className="text-xl font-semibold mb-6 border-l-4 border-blue-600 pl-3">
+                    <h2 className="text-xl font-semibold mb-6 border-l-4 border-emerald-600 dark:border-emerald-500 pl-3">
                         Courses
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {courseList.map((course, idx) => (
                             <div
                                 key={course.title}
-                                className="bg-white dark:bg-gray-900  shadow p-6 flex flex-col h-full"
+                                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col h-full"
                             >
                                 <div className="flex items-center mb-2">
                                     <span className="text-2xl font-bold">{idx + 1}</span>
@@ -257,10 +261,10 @@ export default function Courses() {
                                         <Link
                                             key={lidx}
                                             href={link.href}
-                                            className="text-blue-700 font-medium text-sm hover:underline flex items-center"
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium text-sm rounded-lg shadow-md hover:shadow-lg transition-all"
                                         >
                                             {link.label}
-                                            <svg className="ml-1" width="14" height="14" fill="none" viewBox="0 0 24 24">
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
                                                 <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                         </Link>

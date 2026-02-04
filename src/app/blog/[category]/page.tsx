@@ -26,6 +26,9 @@ export default async function Page({ params }: { params: Promise<{ category: str
 
     return (
         <>
+            {/* Background gradient for light mode */}
+            <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
+
             <Header>
                 <Container>
                     <h1 className="title font-semibold text-2xl tracking-wider mt-4 uppercase">
