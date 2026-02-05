@@ -18,7 +18,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:seed": "node prisma/seed.js",
+    "db:seed": "tsx prisma/seed.ts",
     "db:backup": "./scripts/backup-database.sh",
     "migrate:from-neon": "./scripts/migrate-from-neon.sh",
     "deploy:vps": "./scripts/deploy-vps.sh"
@@ -57,7 +57,11 @@
     "prisma": "^6.8.2",
     "tailwindcss": "^4",
     "ts-jest": "^29.3.4",
+    "tsx": "^4.19.2",
     "tw-animate-css": "^1.3.2",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
