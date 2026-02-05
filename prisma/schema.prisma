@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma schema for E-Learning Platform
+// Generated: 2026-02-05
+// Database: PostgreSQL
 
 generator client {
   provider = "prisma-client-js"
@@ -13,23 +11,712 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  name  String? @db.VarChar(255)
-  email String  @unique @db.VarChar(255)
+// ============================================================================
+// SHARED MODELS
+// ============================================================================
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  slug        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  courses     Course[]
+  blog_posts  BlogPost[]
+
+  @@index([slug])
 }
 
-model Blog {
-  id         Int      @id @default(autoincrement())
-  slug       String   @unique
-  title      String
-  category   String
-  view_count Int      @default(1)
-  updateAt   DateTime @default(now())
+// ============================================================================
+// USER & AUTHENTICATION MODELS
+// ============================================================================
+
+model User {
+  id                Int      @id @default(autoincrement())
+  email             String   @unique @db.VarChar(255)
+  name              String?  @db.VarChar(255)
+
+  // Future auth fields (nullable for gradual rollout)
+  clerk_id          String?  @unique @db.VarChar(255)  // Personal edition (Clerk)
+  azure_oid         String?  @unique @db.VarChar(255)  // Enterprise edition (Azure AD)
+
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  // Relations
+  enrollments       Enrollment[]
+  lesson_progress   LessonProgress[]
+  quiz_attempts     QuizAttempt[]
+  comments          Comment[]
+  reviews           CourseReview[]
+  search_queries    SearchQuery[]
+
+  @@index([email])
+  @@index([clerk_id])
+  @@index([azure_oid])
+}
+
+// ============================================================================
+// BLOG CONTENT MODELS (GitHub-based)
+// ============================================================================
+
+model BlogRepository {
+  id                  Int      @id @default(autoincrement())
+
+  // GitHub details
+  repo_owner          String   @db.VarChar(255)
+  repo_name           String   @db.VarChar(255)
+  branch              String   @db.VarChar(100)  @default("main")
+  content_path        String   @db.VarChar(500)  @default("/")
+
+  // Authentication
+  github_token        String?  @db.VarChar(500)  // Encrypted token
+  is_public           Boolean  @default(true)
+
+  // Sync settings
+  auto_sync           Boolean  @default(true)
+  sync_interval_mins  Int      @default(60)
+  webhook_secret      String?  @db.VarChar(255)
+
+  // Status
+  is_active           Boolean  @default(true)
+  last_synced_at      DateTime?
+  last_sync_status    String?  @db.VarChar(50)
+  last_sync_error     String?  @db.Text
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  blog_posts          BlogPost[]
+
+  @@unique([repo_owner, repo_name, branch])
+  @@index([is_active, auto_sync])
+}
+
+model BlogPost {
+  id                  Int      @id @default(autoincrement())
+  slug                String   @unique @db.VarChar(255)
+
+  // Content
+  title               String   @db.VarChar(500)
+  summary             String?  @db.Text
+  content             String   @db.Text
+
+  // Metadata
+  category_id         Int?
+  published_at        DateTime
+
+  // GitHub sync
+  repository_id       Int?
+  github_path         String?  @db.VarChar(1000)
+  commit_sha          String?  @db.VarChar(40)
+  last_synced_at      DateTime?
+
+  // Publishing
+  is_published        Boolean  @default(false)
+  is_draft            Boolean  @default(false)
+
+  // Analytics
+  view_count          Int      @default(0)
+  read_time_mins      Int?
+
+  // SEO
+  meta_description    String?  @db.VarChar(500)
+  meta_keywords       String?  @db.VarChar(500)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  category            Category?       @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  repository          BlogRepository? @relation(fields: [repository_id], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([category_id])
+  @@index([repository_id])
+  @@index([is_published, published_at])
+  @@index([commit_sha])
+}
+
+model BlogSyncLog {
+  id              Int      @id @default(autoincrement())
+  repository_id   Int
+
+  sync_type       String   @db.VarChar(50)
+  status          String   @db.VarChar(50)
+
+  posts_created   Int      @default(0)
+  posts_updated   Int      @default(0)
+  posts_deleted   Int      @default(0)
+  posts_failed    Int      @default(0)
+
+  error_message   String?  @db.Text
+  duration_ms     Int?
+
+  triggered_by    String?  @db.VarChar(255)
+
+  created_at      DateTime @default(now())
+
+  @@index([repository_id, created_at])
+  @@index([status])
 }
 
 model Subscriber {
-  id      Int @id @default(autoincrement())
-  email   String 
+  id            Int     @id @default(autoincrement())
+  email         String  @unique @db.VarChar(255)
   is_subscribed Boolean @default(true)
+
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@index([email])
+}
+
+// ============================================================================
+// INSTRUCTOR MODELS
+// ============================================================================
+
+model Instructor {
+  id                  Int      @id @default(autoincrement())
+  name                String   @db.VarChar(255)
+  slug                String   @unique @db.VarChar(255)
+  bio                 String?  @db.Text
+  title               String?  @db.VarChar(255)
+  profile_image       String?  @db.VarChar(500)
+  email               String?  @db.VarChar(255)
+  linkedin_url        String?  @db.VarChar(500)
+  twitter_url         String?  @db.VarChar(500)
+  website_url         String?  @db.VarChar(500)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  course_instructors  CourseInstructor[]
+
+  @@index([slug])
+}
+
+model CourseInstructor {
+  id              Int        @id @default(autoincrement())
+  course_id       Int
+  instructor_id   Int
+  role            String     @db.VarChar(100)
+  sequence_order  Int        @default(0)
+
+  created_at      DateTime   @default(now())
+
+  // Relations
+  course          Course     @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  instructor      Instructor @relation(fields: [instructor_id], references: [id], onDelete: Cascade)
+
+  @@unique([course_id, instructor_id])
+  @@index([course_id])
+  @@index([instructor_id])
+}
+
+// ============================================================================
+// COURSE CONTENT MODELS
+// ============================================================================
+
+model Course {
+  id                  Int       @id @default(autoincrement())
+  slug                String    @unique @db.VarChar(255)
+  title               String    @db.VarChar(500)
+  description         String    @db.Text
+  overview            String    @db.Text
+  difficulty_level    String    @db.VarChar(50)
+
+  // Category
+  category_id         Int?
+
+  // Visual elements
+  icon_text           String?   @db.VarChar(10)
+  tailwind_color      String    @db.VarChar(50)
+  thumbnail_url       String?   @db.VarChar(500)
+
+  // Aggregated stats (computed/cached)
+  total_units         Int       @default(0)
+  total_lessons       Int       @default(0)
+  total_duration_mins Int       @default(0)
+  student_count       Int       @default(0)
+
+  // Course type
+  course_type         String    @db.VarChar(50)  @default("video")
+
+  // MkDocs support
+  mkdocs_repo_owner   String?   @db.VarChar(255)
+  mkdocs_repo_name    String?   @db.VarChar(255)
+  mkdocs_branch       String?   @db.VarChar(100) @default("main")
+  mkdocs_site_url     String?   @db.VarChar(1000)
+  mkdocs_github_token String?   @db.VarChar(500)
+  mkdocs_last_synced  DateTime?
+
+  // Pricing & Access
+  is_free             Boolean   @default(true)
+  price               Decimal?  @db.Decimal(10, 2)
+  currency            String?   @db.VarChar(3)
+  max_enrollments     Int?
+
+  // Rating aggregates (computed from reviews)
+  avg_rating          Decimal?  @db.Decimal(3,2)
+  total_reviews       Int       @default(0)
+
+  // Publishing
+  is_published        Boolean   @default(false)
+  sequence_order      Int?
+
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  // Relations
+  category            Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  instructors         CourseInstructor[]
+  units               Unit[]
+  lessons             Lesson[]
+  prerequisites       CoursePrerequisite[]
+  target_roles        CourseTargetRole[]
+  learning_objectives CourseLearningObjective[]
+  enrollments         Enrollment[]
+  reviews             CourseReview[]
+
+  @@index([slug])
+  @@index([category_id])
+  @@index([is_published, sequence_order])
+  @@index([course_type])
+}
+
+model CoursePrerequisite {
+  id                  Int      @id @default(autoincrement())
+  course_id           Int
+  prerequisite_text   String   @db.VarChar(500)
+  sequence_order      Int      @default(0)
+
+  course              Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id])
+}
+
+model CourseTargetRole {
+  id         Int      @id @default(autoincrement())
+  course_id  Int
+  role_name  String   @db.VarChar(100)
+
+  course     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id])
+}
+
+model CourseLearningObjective {
+  id              Int      @id @default(autoincrement())
+  course_id       Int
+  objective_text  String   @db.VarChar(500)
+  sequence_order  Int      @default(0)
+
+  course          Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id])
+}
+
+model Unit {
+  id                  Int      @id @default(autoincrement())
+  course_id           Int
+  slug                String   @db.VarChar(255)
+  title               String   @db.VarChar(500)
+  description         String?  @db.Text
+  sequence_order      Int      @default(0)
+
+  // Aggregated stats
+  total_lessons       Int      @default(0)
+  total_duration_mins Int      @default(0)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  course              Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  lessons             Lesson[]
+  unit_objectives     UnitObjective[]
+
+  @@unique([course_id, slug])
+  @@index([course_id, sequence_order])
+}
+
+model UnitObjective {
+  id              Int    @id @default(autoincrement())
+  unit_id         Int
+  objective_text  String @db.VarChar(500)
+  sequence_order  Int    @default(0)
+
+  unit            Unit   @relation(fields: [unit_id], references: [id], onDelete: Cascade)
+
+  @@index([unit_id])
+}
+
+model Lesson {
+  id                  Int      @id @default(autoincrement())
+  course_id           Int
+  unit_id             Int
+  slug                String   @db.VarChar(255)
+  title               String   @db.VarChar(500)
+  sequence_order      Int      @default(0)
+
+  // Video content
+  youtube_id          String?  @db.VarChar(100)
+  video_duration_mins Int?     @default(0)
+  chapter_url         String?  @db.VarChar(1000)
+
+  // Interactive code editor
+  has_code_editor     Boolean  @default(false)
+  editor_type         String?  @db.VarChar(50)
+  editor_content      String?  @db.Text
+
+  // MkDocs content
+  mkdocs_content      String?  @db.Text
+  mkdocs_file_path    String?  @db.VarChar(1000)
+  mkdocs_commit_sha   String?  @db.VarChar(40)
+
+  // External content
+  external_url        String?  @db.VarChar(1000)
+  iframe_allowed      Boolean  @default(false)
+
+  // Access control
+  is_preview          Boolean  @default(false)
+
+  // Lesson type
+  lesson_type         String   @db.VarChar(50)
+  is_published        Boolean  @default(false)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  course              Course         @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  unit                Unit           @relation(fields: [unit_id], references: [id], onDelete: Cascade)
+  takeaways           LessonTakeaway[]
+  resources           LessonResource[]
+  quizzes             Quiz[]
+  comments            Comment[]
+  progress_records    LessonProgress[]
+
+  @@unique([unit_id, slug])
+  @@index([course_id])
+  @@index([unit_id, sequence_order])
+  @@index([is_preview])
+  @@index([lesson_type])
+}
+
+model LessonTakeaway {
+  id             Int    @id @default(autoincrement())
+  lesson_id      Int
+  takeaway_text  String @db.VarChar(1000)
+  sequence_order Int    @default(0)
+
+  lesson         Lesson @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+
+  @@index([lesson_id])
+}
+
+model LessonResource {
+  id              Int      @id @default(autoincrement())
+  lesson_id       Int
+  resource_title  String   @db.VarChar(255)
+  resource_type   String   @db.VarChar(50)
+  file_url        String   @db.VarChar(1000)
+  file_size_kb    Int?
+  download_count  Int      @default(0)
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  lesson          Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+
+  @@index([lesson_id])
+}
+
+model CourseSyncLog {
+  id              Int      @id @default(autoincrement())
+  course_id       Int
+
+  sync_type       String   @db.VarChar(50)
+  status          String   @db.VarChar(50)
+
+  lessons_created Int      @default(0)
+  lessons_updated Int      @default(0)
+  lessons_deleted Int      @default(0)
+  lessons_failed  Int      @default(0)
+
+  error_message   String?  @db.Text
+  duration_ms     Int?
+
+  triggered_by    String?  @db.VarChar(255)
+
+  created_at      DateTime @default(now())
+
+  @@index([course_id, created_at])
+  @@index([status])
+}
+
+// ============================================================================
+// QUIZ & ASSESSMENT MODELS
+// ============================================================================
+
+model Quiz {
+  id                  Int      @id @default(autoincrement())
+  lesson_id           Int
+  title               String   @db.VarChar(255)
+  description         String?  @db.Text
+  passing_score       Int      @default(70)
+  max_attempts        Int?
+  time_limit_mins     Int?
+
+  is_required         Boolean  @default(true)
+
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  // Relations
+  lesson              Lesson         @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  questions           QuizQuestion[]
+  attempts            QuizAttempt[]
+
+  @@index([lesson_id])
+}
+
+model QuizQuestion {
+  id              Int      @id @default(autoincrement())
+  quiz_id         Int
+  question_text   String   @db.Text
+  question_type   String   @db.VarChar(50)
+  points          Int      @default(1)
+  sequence_order  Int      @default(0)
+  explanation     String?  @db.Text
+
+  // Analytics
+  times_answered  Int      @default(0)
+  times_correct   Int      @default(0)
+  avg_time_secs   Int?
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Relations
+  quiz            Quiz            @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  options         QuizOption[]
+  answers         QuizAnswer[]
+
+  @@index([quiz_id, sequence_order])
+}
+
+model QuizOption {
+  id          Int          @id @default(autoincrement())
+  question_id Int
+  option_text String       @db.VarChar(1000)
+  is_correct  Boolean      @default(false)
+  sequence_order Int       @default(0)
+
+  question    QuizQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@index([question_id])
+}
+
+// ============================================================================
+// USER PROGRESS & ENROLLMENT MODELS
+// ============================================================================
+
+model Enrollment {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int
+  course_id             Int
+
+  enrollment_status     String    @db.VarChar(50)
+  progress_percentage   Int       @default(0)
+
+  enrolled_at           DateTime  @default(now())
+  started_at            DateTime?
+  completed_at          DateTime?
+  last_accessed_at      DateTime?
+
+  // Relations
+  user                  User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  course                Course    @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, course_id])
+  @@index([user_id])
+  @@index([course_id])
+}
+
+model LessonProgress {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int
+  lesson_id             Int
+
+  is_completed          Boolean   @default(false)
+  completion_percentage Int       @default(0)
+
+  // Video tracking
+  watch_duration_secs   Int       @default(0)
+  last_position_secs    Int       @default(0)
+
+  // Engagement metrics
+  replay_count          Int       @default(0)
+  speed_preference      Decimal?  @db.Decimal(3,2)
+  dropped_at_secs       Int?
+
+  // Quiz requirement
+  quiz_passed           Boolean   @default(false)
+  quiz_attempts         Int       @default(0)
+
+  started_at            DateTime  @default(now())
+  completed_at          DateTime?
+  last_accessed_at      DateTime  @default(now())
+
+  // Relations
+  user                  User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  lesson                Lesson    @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, lesson_id])
+  @@index([user_id])
+  @@index([lesson_id])
+  @@index([is_completed])
+}
+
+model QuizAttempt {
+  id                Int       @id @default(autoincrement())
+  user_id           Int
+  quiz_id           Int
+
+  attempt_number    Int       @default(1)
+  score             Int
+  max_score         Int
+  percentage        Int
+  passed            Boolean   @default(false)
+
+  time_taken_mins   Int?
+
+  started_at        DateTime  @default(now())
+  completed_at      DateTime?
+
+  // Relations
+  user              User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  quiz              Quiz       @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+  answers           QuizAnswer[]
+
+  @@index([user_id, quiz_id])
+  @@index([quiz_id])
+}
+
+model QuizAnswer {
+  id                  Int          @id @default(autoincrement())
+  attempt_id          Int
+  question_id         Int
+
+  selected_option_id  Int?
+  answer_text         String?      @db.Text
+  is_correct          Boolean      @default(false)
+  points_earned       Int          @default(0)
+
+  answered_at         DateTime     @default(now())
+
+  // Relations
+  attempt             QuizAttempt  @relation(fields: [attempt_id], references: [id], onDelete: Cascade)
+  question            QuizQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@unique([attempt_id, question_id])
+  @@index([attempt_id])
+}
+
+// ============================================================================
+// COMMUNITY & ENGAGEMENT MODELS
+// ============================================================================
+
+model Comment {
+  id                  Int       @id @default(autoincrement())
+  lesson_id           Int
+  user_id             Int?
+
+  author_name         String    @db.VarChar(255)
+  author_email        String?   @db.VarChar(255)
+  content             String    @db.Text
+
+  // Threading support
+  parent_comment_id   Int?
+
+  // Video timestamp linking
+  video_timestamp_secs Int?
+
+  // Moderation
+  is_pinned           Boolean   @default(false)
+  is_flagged          Boolean   @default(false)
+  is_hidden           Boolean   @default(false)
+
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  // Relations
+  lesson              Lesson    @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+  user                User?     @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  parent_comment      Comment?  @relation("CommentReplies", fields: [parent_comment_id], references: [id], onDelete: Cascade)
+  replies             Comment[] @relation("CommentReplies")
+
+  @@index([lesson_id, created_at])
+  @@index([parent_comment_id])
+  @@index([user_id])
+}
+
+model CourseReview {
+  id              Int      @id @default(autoincrement())
+  course_id       Int
+  user_id         Int
+
+  rating          Int
+  review_title    String?  @db.VarChar(255)
+  review_text     String?  @db.Text
+
+  is_verified     Boolean  @default(false)
+  is_featured     Boolean  @default(false)
+  is_hidden       Boolean  @default(false)
+
+  helpful_count   Int      @default(0)
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  // Relations
+  course          Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, course_id])
+  @@index([course_id, rating])
+  @@index([user_id])
+}
+
+// ============================================================================
+// ANALYTICS MODELS
+// ============================================================================
+
+model SearchQuery {
+  id                  Int      @id @default(autoincrement())
+  user_id             Int?
+
+  query_text          String   @db.VarChar(500)
+  results_count       Int      @default(0)
+  search_type         String   @db.VarChar(50)
+
+  clicked_result_id   Int?
+  clicked_result_type String?  @db.VarChar(50)
+
+  created_at          DateTime @default(now())
+
+  // Relations
+  user                User?    @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
+  @@index([query_text])
+  @@index([created_at])
+  @@index([user_id])
 }
