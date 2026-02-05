@@ -962,6 +962,7 @@ async function seedLessonsForUnit(
         'Key concepts overview',
         'Practical applications',
       ],
+      has_code_editor: false,
     },
     {
       title: 'Hands-on Demo',
@@ -969,12 +970,56 @@ async function seedLessonsForUnit(
       youtube_id: 'EmIht4R6xV4',
       duration: 10,
       takeaways: ['Step-by-step implementation', 'Code examples', 'Best practices'],
+      has_code_editor: true,
+      editor_type: 'javascript',
+      editor_content: `// SAP UI5 - Creating a Simple Controller
+// This example demonstrates how to define a controller in SAPUI5
+
+sap.ui.define([
+  "sap/ui/core/mvc/Controller",
+  "sap/m/MessageToast"
+], function (Controller, MessageToast) {
+  "use strict";
+
+  return Controller.extend("myapp.controller.Main", {
+
+    onInit: function() {
+      console.log("Controller initialized");
+    },
+
+    onButtonPress: function() {
+      MessageToast.show("Button was pressed!");
+      console.log("User clicked the button");
+    },
+
+    calculateSum: function(a, b) {
+      const result = a + b;
+      console.log(\`Sum of \${a} + \${b} = \${result}\`);
+      return result;
+    }
+
+  });
+});
+
+// Try it out:
+console.log("=== SAPUI5 Controller Demo ===");
+
+// Simulate controller initialization
+console.log("Controller initialized");
+
+// Simulate button press
+console.log("Button was pressed!");
+
+// Test the calculation method
+const sum = 10 + 20;
+console.log(\`Sum of 10 + 20 = \${sum}\`);`,
     },
     {
       title: 'Quiz',
       lesson_type: 'quiz',
       duration: 5,
       takeaways: [],
+      has_code_editor: false,
     },
   ]
 
@@ -994,6 +1039,9 @@ async function seedLessonsForUnit(
         lesson_type: template.lesson_type,
         is_published: true,
         is_preview: i === 0, // First lesson is free preview
+        has_code_editor: template.has_code_editor,
+        editor_type: template.editor_type,
+        editor_content: template.editor_content,
       },
     })
 

@@ -287,41 +287,67 @@ export default async function LessonPage({
                 <CardTitle className="text-base">Course Lessons</CardTitle>
               </CardHeader>
               <CardContent className="max-h-[600px] overflow-y-auto">
-                <div className="space-y-1">
-                  {allLessons.map((l, idx) => (
-                    <Link
-                      key={l.id}
-                      href={`/courses/${lesson.course.slug}/${l.slug}`}
-                    >
-                      <div
-                        className={`p-3 rounded-lg transition-colors cursor-pointer ${
-                          l.id === lesson.id
-                            ? "bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800"
-                            : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent"
-                        }`}
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-xs font-semibold text-muted-foreground mt-0.5">
-                            {idx + 1}
-                          </span>
-                          <div className="flex-1">
-                            <p
-                              className={`text-sm font-medium ${
-                                l.id === lesson.id
-                                  ? "text-emerald-700 dark:text-emerald-400"
-                                  : "text-gray-900 dark:text-white"
-                              }`}
+                <div className="space-y-4">
+                  {(() => {
+                    // Group lessons by unit
+                    const lessonsByUnit = allLessons.reduce((acc, l, idx) => {
+                      const unitId = l.unit_id
+                      if (!acc[unitId]) {
+                        acc[unitId] = {
+                          unit: l.unit,
+                          lessons: [],
+                        }
+                      }
+                      acc[unitId].lessons.push({ ...l, globalIndex: idx })
+                      return acc
+                    }, {} as Record<number, { unit: { title: string }; lessons: Array<typeof allLessons[0] & { globalIndex: number }> }>)
+
+                    return Object.values(lessonsByUnit).map((group, unitIdx) => (
+                      <div key={unitIdx}>
+                        {/* Unit Header */}
+                        <div className="mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+                          <h4 className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            Unit {unitIdx + 1}: {group.unit.title}
+                          </h4>
+                        </div>
+
+                        {/* Lessons in Unit */}
+                        <div className="space-y-1">
+                          {group.lessons.map((l) => (
+                            <Link
+                              key={l.id}
+                              href={`/courses/${lesson.course.slug}/${l.slug}`}
                             >
-                              {l.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {l.unit.title}
-                            </p>
-                          </div>
+                              <div
+                                className={`p-3 rounded-lg transition-colors cursor-pointer ${
+                                  l.id === lesson.id
+                                    ? "bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800"
+                                    : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent"
+                                }`}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <span className="text-xs font-semibold text-muted-foreground mt-0.5">
+                                    {l.globalIndex + 1}
+                                  </span>
+                                  <div className="flex-1">
+                                    <p
+                                      className={`text-sm font-medium ${
+                                        l.id === lesson.id
+                                          ? "text-emerald-700 dark:text-emerald-400"
+                                          : "text-gray-900 dark:text-white"
+                                      }`}
+                                    >
+                                      {l.title}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
                         </div>
                       </div>
-                    </Link>
-                  ))}
+                    ))
+                  })()}
                 </div>
               </CardContent>
             </Card>
