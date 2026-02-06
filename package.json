@@ -21,7 +21,10 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:backup": "./scripts/backup-database.sh",
     "migrate:from-neon": "./scripts/migrate-from-neon.sh",
-    "deploy:vps": "./scripts/deploy-vps.sh"
+    "deploy:vps": "./scripts/deploy-vps.sh",
+    "video:check": "./scripts/check-video-storage.sh",
+    "video:backup": "./scripts/backup-videos.sh",
+    "video:process": "node scripts/process-video.js"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",

@@ -367,9 +367,15 @@ model Lesson {
   sequence_order      Int      @default(0)
 
   // Video content
+  video_type          String   @db.VarChar(20) @default("youtube") // "youtube" or "hls"
   youtube_id          String?  @db.VarChar(100)
   video_duration_mins Int?     @default(0)
   chapter_url         String?  @db.VarChar(1000)
+
+  // HLS video support (for protected paid content)
+  hls_playlist_path   String?  @db.VarChar(500)  // Relative path to .m3u8 file
+  hls_storage_path    String?  @db.VarChar(500)  // Directory containing video segments
+  hls_encryption_key  String?  @db.VarChar(500)  // Encrypted AES-128 key for video segments
 
   // Interactive code editor
   has_code_editor     Boolean  @default(false)
