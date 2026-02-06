@@ -78,9 +78,10 @@ async function getLessonData(courseSlug: string, lessonSlug: string) {
 export default async function LessonPage({
   params,
 }: {
-  params: { courseId: string; lecture: string }
+  params: Promise<{ courseId: string; lecture: string }>
 }) {
-  const data = await getLessonData(params.courseId, params.lecture)
+  const { courseId, lecture } = await params
+  const data = await getLessonData(courseId, lecture)
 
   if (!data) {
     notFound()

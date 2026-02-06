@@ -65,9 +65,10 @@ async function getCourseData(slug: string) {
 export default async function CourseLanding({
   params,
 }: {
-  params: { courseId: string }
+  params: Promise<{ courseId: string }>
 }) {
-  const course = await getCourseData(params.courseId)
+  const { courseId } = await params
+  const course = await getCourseData(courseId)
 
   if (!course) {
     notFound()
