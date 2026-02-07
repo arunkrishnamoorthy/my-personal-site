@@ -1,0 +1,161 @@
+---
+title: "Working with forked repository"
+publishedAt: "2024-04-07"
+summary: "In the ever-evolving landscape of software development, the debate between dynamic and static typing continues to be a hot topic."
+category: "UI5"
+---
+
+# Upstream Repository Setup Guide
+
+This document describes how the SAP samples repository was configured as an upstream remote, allowing us to maintain our own customizations while still pulling future updates from SAP.
+
+## Background
+
+This project was originally cloned from SAP's repository:
+- **SAP Repository:** https://github.com/SAP-samples/btp-resource-consumption-monitor.git
+- **Our Repository:** git@github.com:Aarini-Consulting/btp-resource-consumption-monitor.git
+
+We needed a setup where:
+1. We can push our customizations to our own repository
+2. We can pull new updates from SAP whenever they release changes
+3. Git can merge SAP's changes with ours because they share a common commit history
+
+## Initial Setup (Already Completed)
+
+### Step 1: Rename SAP's remote from `origin` to `upstream`
+
+When the project was cloned from SAP, the default remote `origin` pointed to SAP's repo. We renamed it to `upstream` to reserve `origin` for our own repository.
+
+```bash
+git remote rename origin upstream
+```
+
+- **Before:** `origin` -> SAP's repo
+- **After:** `upstream` -> SAP's repo, `origin` is free
+
+### Step 2: Add our repository as the new `origin`
+
+```bash
+git remote add origin git@github.com:Aarini-Consulting/btp-resource-consumption-monitor.git
+```
+
+### Step 3: Verify the remote configuration
+
+```bash
+git remote -v
+```
+
+Expected output:
+```
+origin    git@github.com:Aarini-Consulting/btp-resource-consumption-monitor.git (fetch)
+origin    git@github.com:Aarini-Consulting/btp-resource-consumption-monitor.git (push)
+upstream  https://github.com/SAP-samples/btp-resource-consumption-monitor.git (fetch)
+upstream  https://github.com/SAP-samples/btp-resource-consumption-monitor.git (push)
+```
+
+### Step 4: Fetch and sync with both remotes
+
+```bash
+git fetch origin
+git fetch upstream
+```
+
+### Step 5: Set local `main` to track our `origin/main`
+
+```bash
+git push -u origin main
+```
+
+The `-u` flag sets `origin/main` as the default upstream tracking branch for the local `main` branch. After this, `git push` and `git pull` will default to our repository.
+
+## Remote Summary
+
+| Remote     | URL                                                                          | Purpose                              |
+|------------|------------------------------------------------------------------------------|--------------------------------------|
+| `origin`   | `git@github.com:Aarini-Consulting/btp-resource-consumption-monitor.git`      | Our repository - push/pull our work  |
+| `upstream` | `https://github.com/SAP-samples/btp-resource-consumption-monitor.git`        | SAP's repository - pull their updates|
+
+## Day-to-Day Workflow
+
+### Pushing your changes to our repository
+
+```bash
+git add <files>
+git commit -m "your commit message"
+git push origin main
+```
+
+### Pulling SAP's latest updates
+
+When SAP publishes new changes, run:
+
+```bash
+# 1. Fetch the latest from SAP
+git fetch upstream
+
+# 2. Check what's new (optional - shows commits in upstream that we don't have)
+git log main..upstream/main --oneline
+
+# 3. Merge SAP's changes into your local branch
+git merge upstream/main
+
+# 4. Resolve any merge conflicts if they occur (see section below)
+
+# 5. Push the merged result to our repository
+git push origin main
+```
+
+### Resolving Merge Conflicts
+
+When SAP modifies files that we have also customized, Git will report merge conflicts. The files most likely to conflict are the ones we customized:
+
+- `cf/mta.yaml` - commented-out service bindings (btprc-notif, btprc-scheduler, btprc-log)
+- `cf/package.json` - custom build scripts and deploy commands
+- `cf/srv/server.ts` - commented-out job scheduler configuration
+
+To resolve conflicts:
+
+```bash
+# 1. After `git merge upstream/main` reports conflicts, open the conflicting files
+#    Look for conflict markers:
+#    <<<<<<< HEAD        (our changes)
+#    =======
+#    >>>>>>> upstream/main (SAP's changes)
+
+# 2. Edit the files to keep the desired version of each section
+
+# 3. Mark conflicts as resolved
+git add <resolved-files>
+
+# 4. Complete the merge
+git commit
+
+# 5. Push to our repository
+git push origin main
+```
+
+### Checking the sync status between repositories
+
+```bash
+# See what SAP has that we don't
+git log main..upstream/main --oneline
+
+# See what we have that SAP doesn't (our customizations)
+git log upstream/main..main --oneline
+
+# See if both are at the same point
+git log --oneline -5 origin/main
+git log --oneline -5 upstream/main
+```
+
+## Our Customizations (as of initial setup)
+
+These are the files we modified from SAP's original. Keep these in mind during future merges:
+
+| File | Customization |
+|------|---------------|
+| `cf/mta.yaml` | Commented-out btprc-notif, btprc-scheduler service bindings; added btprc-log service |
+| `cf/package.json` | Custom build scripts (build:cf, build:cds, build:models, build:ts, etc.) and deploy commands referencing v2.0.2 |
+| `cf/srv/server.ts` | Commented out job scheduler job definitions and job validation logic |
+| `cf/xs-security.json` | Custom security configuration |
+| `workzone/cdm/apps/*.json` | Custom Work Zone CDM app configurations (8 files) |

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { highlight } from "sugar-high";
+import remarkGfm from "remark-gfm";
 
 function Blockquote(props: any) {
     return (
@@ -79,28 +80,6 @@ function createHeading(level: number) {
     return Heading;
 }
 
-function Table({ data } : any) {
-
-    const headers = data.headers.map((header:any, index: any) => (
-        <th key={index}>{header}</th>
-    ))
-
-    const rows = data.rows.map((cell: any, cellIndex: any) => (
-        <td key={cellIndex}>{cell}</td>
-    ))
-    return (
-        <Table>
-            <thead>
-                <tr>{headers}</tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </Table>
-    )
-}
-
-
 const components =  {
     h1: createHeading(1),
     h2: createHeading(2),
@@ -112,14 +91,18 @@ const components =  {
     a: CustomLink,
     code: Code,
     blockquote: Blockquote,
-    Table
 }
 
 export function CustomMDX(props:any) {
     return(
-        <MDXRemote 
-            {...props} 
+        <MDXRemote
+            {...props}
             components={{ ...components, ...(props.components || {}) }}
+            options={{
+                mdxOptions: {
+                    remarkPlugins: [remarkGfm],
+                }
+            }}
         />
-    )    
+    )
 }

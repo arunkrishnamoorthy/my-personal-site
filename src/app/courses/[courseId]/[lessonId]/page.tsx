@@ -33,17 +33,10 @@ async function getLessonData(courseSlug: string, lessonSlug: string) {
         },
       },
       unit: {
-        include: {
-          lessons: {
-            where: { is_published: true },
-            orderBy: { sequence_order: "asc" },
-            select: {
-              id: true,
-              slug: true,
-              title: true,
-              sequence_order: true,
-            },
-          },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
         },
       },
       takeaways: {
@@ -55,7 +48,36 @@ async function getLessonData(courseSlug: string, lessonSlug: string) {
     },
   })
 
-  return lesson
+  if (!lesson) return null
+
+  // Get all lessons in the course for full navigation
+  const allLessons = await db.lesson.findMany({
+    where: {
+      course_id: lesson.course_id,
+      is_published: true,
+    },
+    include: {
+      unit: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
+    orderBy: [{ unit: { sequence_order: "asc" } }, { sequence_order: "asc" }],
+  })
+
+  const currentIndex = allLessons.findIndex((l) => l.id === lesson.id)
+  const previousLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null
+  const nextLesson =
+    currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null
+
+  return {
+    lesson,
+    previousLesson,
+    nextLesson,
+    allLessons,
+  }
 }
 
 export default async function LessonPage({
@@ -64,11 +86,13 @@ export default async function LessonPage({
   params: Promise<{ courseId: string; lessonId: string }>
 }) {
   const { courseId, lessonId } = await params
-  const lesson = await getLessonData(courseId, lessonId)
+  const data = await getLessonData(courseId, lessonId)
 
-  if (!lesson) {
+  if (!data) {
     notFound()
   }
+
+  const { lesson, previousLesson, nextLesson, allLessons } = data
 
   // Generate video token for HLS videos
   let videoToken: string | undefined
@@ -76,31 +100,31 @@ export default async function LessonPage({
     videoToken = await generateVideoToken(courseId, lessonId)
   }
 
-  // Find previous and next lessons
-  const currentIndex = lesson.unit.lessons.findIndex((l) => l.id === lesson.id)
-  const previousLesson = currentIndex > 0 ? lesson.unit.lessons[currentIndex - 1] : null
-  const nextLesson =
-    currentIndex < lesson.unit.lessons.length - 1
-      ? lesson.unit.lessons[currentIndex + 1]
-      : null
-
   return (
     <Container>
       <MainNav />
 
       <div className="fixed inset-0 -z-10 bg-gradient-to-b from-emerald-50/30 via-white to-white dark:from-background dark:via-background dark:to-background pointer-events-none"></div>
 
-      {/* Back to Course Button */}
-      <div className="w-full max-w-7xl mx-auto mt-6 mb-4">
-        <Link href={`/courses/${courseId}`}>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ChevronLeft className="w-4 h-4" />
-            Back to Course
-          </Button>
-        </Link>
-      </div>
-
-      <main className="w-full max-w-7xl mx-auto">
+      <main className="w-full max-w-7xl mx-auto mt-8 mb-16">
+        {/* Breadcrumb */}
+        <div className="mb-4 text-sm text-muted-foreground">
+          <Link
+            href="/courses"
+            className="hover:text-emerald-600 transition-colors"
+          >
+            Courses
+          </Link>
+          <span className="mx-2">›</span>
+          <Link
+            href={`/courses/${lesson.course.slug}`}
+            className="hover:text-emerald-600 transition-colors"
+          >
+            {lesson.course.title}
+          </Link>
+          <span className="mx-2">›</span>
+          <span className="text-gray-900 dark:text-white">{lesson.title}</span>
+        </div>
         {/* Video Section */}
         <div className="mb-8">
           <VideoPlayer
@@ -194,10 +218,33 @@ export default async function LessonPage({
               </Card>
             )}
 
+            {/* Chapter URL */}
+            {lesson.chapter_url && (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-emerald-600" />
+                    <span className="text-sm font-medium">
+                      Want to learn more?
+                    </span>
+                  </div>
+                  <a
+                    href={lesson.chapter_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 text-sm underline"
+                  >
+                    Read the full chapter
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </a>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Navigation Buttons */}
             <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-800">
               {previousLesson ? (
-                <Link href={`/courses/${courseId}/${previousLesson.slug}`}>
+                <Link href={`/courses/${lesson.course.slug}/${previousLesson.slug}`}>
                   <Button variant="outline" className="gap-2">
                     <ChevronLeft className="w-4 h-4" />
                     Previous Lesson
@@ -207,59 +254,103 @@ export default async function LessonPage({
                 <div />
               )}
               {nextLesson ? (
-                <Link href={`/courses/${courseId}/${nextLesson.slug}`}>
+                <Link href={`/courses/${lesson.course.slug}/${nextLesson.slug}`}>
                   <Button className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
                     Next Lesson
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </Link>
               ) : (
-                <Link href={`/courses/${courseId}`}>
+                <Link href={`/courses/${lesson.course.slug}`}>
                   <Button className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
                     <CheckCircle2 className="w-4 h-4" />
-                    Complete Unit
+                    Back to Course
                   </Button>
                 </Link>
               )}
             </div>
           </div>
 
-          {/* Sidebar - Unit Lessons */}
+          {/* Sidebar - Course Outline */}
           <div className="lg:col-span-1">
             <Card className="sticky top-6">
               <CardHeader>
-                <CardTitle className="text-base">{lesson.unit.title}</CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  {lesson.unit.lessons.length} lessons in this unit
-                </p>
+                <CardTitle className="text-base">Course Lessons</CardTitle>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {lesson.unit.lessons.map((unitLesson, idx) => (
-                    <li key={unitLesson.id}>
-                      <Link href={`/courses/${courseId}/${unitLesson.slug}`}>
-                        <div
-                          className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
-                            unitLesson.id === lesson.id
-                              ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400"
-                              : "hover:bg-gray-100 dark:hover:bg-gray-800 text-muted-foreground"
-                          }`}
-                        >
-                          <div
-                            className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold ${
-                              unitLesson.id === lesson.id
-                                ? "bg-emerald-600 text-white"
-                                : "bg-gray-200 dark:bg-gray-700"
-                            }`}
+              <CardContent className="max-h-[600px] overflow-y-auto">
+                <div className="space-y-4">
+                  {(() => {
+                    // Group lessons by unit
+                    const lessonsByUnit = allLessons.reduce(
+                      (acc, l, idx) => {
+                        const unitId = l.unit.id
+                        if (!acc[unitId]) {
+                          acc[unitId] = {
+                            unit: l.unit,
+                            lessons: [],
+                          }
+                        }
+                        acc[unitId].lessons.push({ ...l, globalIndex: idx })
+                        return acc
+                      },
+                      {} as Record<
+                        number,
+                        {
+                          unit: { id: number; title: string }
+                          lessons: Array<
+                            (typeof allLessons)[0] & { globalIndex: number }
                           >
-                            {idx + 1}
-                          </div>
-                          <span className="text-sm flex-1">{unitLesson.title}</span>
+                        }
+                      >
+                    )
+
+                    return Object.values(lessonsByUnit).map((group, unitIdx) => (
+                      <div key={group.unit.id}>
+                        {/* Unit Header */}
+                        <div className="mb-2 pb-2 border-b border-gray-200 dark:border-gray-700">
+                          <h4 className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            Unit {unitIdx + 1}: {group.unit.title}
+                          </h4>
                         </div>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+
+                        {/* Lessons in Unit */}
+                        <div className="space-y-1">
+                          {group.lessons.map((l) => (
+                            <Link
+                              key={l.id}
+                              href={`/courses/${lesson.course.slug}/${l.slug}`}
+                            >
+                              <div
+                                className={`p-3 rounded-lg transition-colors cursor-pointer ${
+                                  l.id === lesson.id
+                                    ? "bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800"
+                                    : "hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent"
+                                }`}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <span className="text-xs font-semibold text-muted-foreground mt-0.5">
+                                    {l.globalIndex + 1}
+                                  </span>
+                                  <div className="flex-1">
+                                    <p
+                                      className={`text-sm font-medium ${
+                                        l.id === lesson.id
+                                          ? "text-emerald-700 dark:text-emerald-400"
+                                          : "text-gray-900 dark:text-white"
+                                      }`}
+                                    >
+                                      {l.title}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  })()}
+                </div>
               </CardContent>
             </Card>
           </div>

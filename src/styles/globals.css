@@ -244,11 +244,33 @@ input[type="email"] {
   appearance: none;
 }
 
-table {
-  display: block;
-  max-width: fit-content;
-  overflow-x: auto;
-  white-space: nowrap;
+.prose table {
+  @apply w-full border-collapse my-6 text-sm;
+}
+
+.prose thead {
+  @apply border-b-2 border-neutral-300 dark:border-neutral-700;
+}
+
+.prose thead th {
+  @apply font-semibold text-left p-3 text-neutral-900 dark:text-neutral-100;
+}
+
+.prose tbody tr {
+  @apply border-b border-neutral-200 dark:border-neutral-800;
+}
+
+.prose tbody tr:last-child {
+  @apply border-b-0;
+}
+
+.prose tbody td {
+  @apply p-3 text-neutral-700 dark:text-neutral-300;
+}
+
+.prose tbody td code,
+.prose thead th code {
+  @apply bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded text-xs font-mono;
 }
 
 .title {

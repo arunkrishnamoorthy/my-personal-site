@@ -52,7 +52,7 @@ export default async function Page({
             </Header>
 
             <Container>
-                <article className="prose">
+                <article className="prose prose-neutral dark:prose-invert max-w-none">
                     <CustomMDX source={post.content} />
                 </article>
                 {/* <p>{post.content}</p> */}
