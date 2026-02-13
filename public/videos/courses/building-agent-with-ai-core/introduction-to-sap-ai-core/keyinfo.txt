@@ -1,0 +1,3 @@
+/api/videos/key/course-10/introduction-to-sap-ai-core
+public/videos/courses/course-10/introduction-to-sap-ai-core/key.key
+fd3c4ef50e7e9fc4cd1c52f80491f44b

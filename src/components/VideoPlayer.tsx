@@ -125,12 +125,7 @@ function HLSPlayer({
           const Hls = module.default
 
           if (Hls.isSupported()) {
-            const hls = new Hls({
-              xhrSetup: (xhr: XMLHttpRequest) => {
-                // Ensure token is included in all segment requests
-                xhr.withCredentials = false
-              },
-            })
+            const hls = new Hls()
 
             hls.loadSource(videoUrl)
             hls.attachMedia(video)

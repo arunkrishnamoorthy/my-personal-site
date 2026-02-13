@@ -99,22 +99,31 @@ export async function GET(
       ? "video/mp2t"
       : "application/octet-stream"
 
-    // If serving playlist, modify it to include token in segment URLs
+    // If serving playlist, modify segment URLs to use query parameters
     let modifiedContent = fileContent
     if (sanitizedFile.endsWith(".m3u8")) {
       const playlistContent = fileContent.toString("utf-8")
 
-      // Replace segment URLs to include token
-      const modifiedPlaylist = playlistContent.replace(
-        /(segment-\d+\.ts)/g,
-        `$1?token=${token}`
+      // Build base URL for this playlist (without file parameter)
+      const baseUrl = `/api/videos/${courseSlug}/${lessonSlug}?token=${token}`
+
+      // Replace segment filenames with full query-parameter URLs
+      let modifiedPlaylist = playlistContent.replace(
+        /^(segment-\d+\.ts)$/gm,
+        `${baseUrl}&file=$1`
+      )
+
+      // Replace encryption key URI to include token
+      modifiedPlaylist = modifiedPlaylist.replace(
+        /URI="([^"]+)"/g,
+        `URI="$1?token=${token}"`
       )
 
       modifiedContent = Buffer.from(modifiedPlaylist)
     }
 
     // Return file with appropriate headers
-    return new NextResponse(modifiedContent, {
+    return new NextResponse(modifiedContent as any, {
       headers: {
         "Content-Type": contentType,
         "Cache-Control": "private, no-cache, no-store, must-revalidate",
